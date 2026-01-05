@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CastPvP - Panel Licencji</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .api-url {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .api-url input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .list-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .list-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        #licenseList {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .license-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .license-item.inactive {
+            border-left-color: #dc3545;
+            opacity: 0.7;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .result-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 CastPvP - Panel Licencji</h1>
+            <div class="api-url">
+                <label style="color: white; margin-bottom: 10px; display: block;">📡 API URL:</label>
+                <input type="text" id="apiUrl" value="https://your-api.onrender.com" placeholder="Wpisz URL swojego API">
+            </div>
+        </div>
+
+        <div class="cards">
+            <!-- Add License Card -->
+            <div class="card">
+                <h2>➕ Dodaj Licencję</h2>
+                <form id="addForm">
+                    <div class="form-group">
+                        <label>Klucz Licencji:</label>
+                        <input type="text" id="addKey" placeholder="TEST-1234-5678-ABCD" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Server ID:</label>
+                        <input type="text" id="addServerId" placeholder="test-server-001" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Właściciel:</label>
+                        <input type="text" id="addOwner" placeholder="Nazwa Firmy" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Dodaj Licencję</button>
+                </form>
+                <div id="addResult" class="result-box"></div>
+            </div>
+
+            <!-- Check License Card -->
+            <div class="card">
+                <h2>🔍 Sprawdź Licencję</h2>
+                <form id="checkForm">
+                    <div class="form-group">
+                        <label>Klucz Licencji:</label>
+                        <input type="text" id="checkKey" placeholder="TEST-1234-5678-ABCD" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Server ID:</label>
+                        <input type="text" id="checkServerId" placeholder="test-server-001" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sprawdź</button>
+                </form>
+                <div id="checkResult" class="result-box"></div>
+            </div>
+
+            <!-- Manage License Card -->
+            <div class="card">
+                <h2>⚙️ Zarządzaj Licencją</h2>
+                <form id="manageForm">
+                    <div class="form-group">
+                        <label>Klucz Licencji:</label>
+                        <input type="text" id="manageKey" placeholder="TEST-1234-5678-ABCD" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Akcja:</label>
+                        <select id="manageAction" required>
+                            <option value="">-- Wybierz --</option>
+                            <option value="activate">Aktywuj</option>
+                            <option value="deactivate">Dezaktywuj</option>
+                            <option value="reset-hwid">Resetuj HWID</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Powód:</label>
+                        <input type="text" id="manageReason" placeholder="Np. Brak płatności">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Wykonaj</button>
+                </form>
+                <div id="manageResult" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- License List -->
+        <div class="list-section">
+            <h2>📋 Wszystkie Licencje</h2>
+            <button onclick="loadLicenses()" class="btn btn-secondary" style="width: auto; margin-bottom: 20px;">🔄 Odśwież Listę</button>
+            <div id="licenseList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = () => document.getElementById('apiUrl').value;
+
+        // Add License
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = document.getElementById('addResult');
+            
+            const data = {
+                key: document.getElementById('addKey').value,
+                serverId: document.getElementById('addServerId').value,
+                owner: document.getElementById('addOwner').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL()}/api/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const json = await response.json();
+                result.className = `result-box show alert ${json.success ? 'alert-success' : 'alert-error'}`;
+                result.textContent = json.message;
+                
+                if (json.success) {
+                    document.getElementById('addForm').reset();
+                    loadLicenses();
+                }
+            } catch (error) {
+                result.className = 'result-box show alert alert-error';
+                result.textContent = 'Błąd połączenia z API';
+            }
+        });
+
+        // Check License
+        document.getElementById('checkForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = document.getElementById('checkResult');
+            
+            const data = {
+                key: document.getElementById('checkKey').value,
+                serverId: document.getElementById('checkServerId').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL()}/api/check`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const json = await response.json();
+                
+                if (json.success) {
+                    result.className = 'result-box show alert alert-success';
+                    result.innerHTML = `
+                        <strong>Licencja znaleziona:</strong><br>
+                        Klucz: ${json.data.key}<br>
+                        Server: ${json.data.serverId}<br>
+                        Właściciel: ${json.data.owner}<br>
+                        HWID: ${json.data.hwid}<br>
+                        Status: ${json.data.active ? '✅ Aktywna' : '❌ Nieaktywna'}<br>
+                        Data utworzenia: ${new Date(json.data.createdAt).toLocaleString('pl-PL')}
+                    `;
+                } else {
+                    result.className = 'result-box show alert alert-error';
+                    result.textContent = json.message;
+                }
+            } catch (error) {
+                result.className = 'result-box show alert alert-error';
+                result.textContent = 'Błąd połączenia z API';
+            }
+        });
+
+        // Manage License
+        document.getElementById('manageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = document.getElementById('manageResult');
+            
+            const data = {
+                key: document.getElementById('manageKey').value,
+                action: document.getElementById('manageAction').value,
+                reason: document.getElementById('manageReason').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL()}/api/manage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const json = await response.json();
+                result.className = `result-box show alert ${json.success ? 'alert-success' : 'alert-error'}`;
+                result.textContent = json.message;
+                
+                if (json.success) {
+                    document.getElementById('manageForm').reset();
+                    loadLicenses();
+                }
+            } catch (error) {
+                result.className = 'result-box show alert alert-error';
+                result.textContent = 'Błąd połączenia z API';
+            }
+        });
+
+        // Load Licenses
+        async function loadLicenses() {
+            const list = document.getElementById('licenseList');
+            list.innerHTML = '<p>Ładowanie...</p>';
+
+            try {
+                const response = await fetch(`${API_URL()}/api/list`);
+                const json = await response.json();
+                
+                if (json.success && json.data.length > 0) {
+                    list.innerHTML = json.data.map(license => `
+                        <div class="license-item ${license.active ? '' : 'inactive'}">
+                            <strong>${license.key}</strong><br>
+                            Server: ${license.serverId} | Właściciel: ${license.owner}<br>
+                            HWID: ${license.hwid || 'Nie przypisany'} | Status: ${license.active ? '✅ Aktywna' : '❌ Nieaktywna'}<br>
+                            <small>Utworzono: ${new Date(license.createdAt).toLocaleString('pl-PL')}</small>
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<p>Brak licencji</p>';
+                }
+            } catch (error) {
+                list.innerHTML = '<p class="alert alert-error">Błąd połączenia z API</p>';
+            }
+        }
+
+        // Load on page load
+        window.addEventListener('load', loadLicenses);
+    </script>
+</body>
+</html>
